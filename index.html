@@ -1,0 +1,2533 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operation Rising Water</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eaf0f3;--surface:#fff;--surface2:#f3f7f9;--ink:#10222b;--muted:#566a75;--line:#cbd8de;--accent:#b45309;--accent-ink:#fff;--water:#0e7490;--good:#15803d;--bad:#c62828;
+--display:'Barlow Condensed','Arial Narrow',Arial,sans-serif;--body:'IBM Plex Sans',system-ui,Arial,sans-serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#09151b;--surface:#102129;--surface2:#162c36;--ink:#e5eef1;--muted:#90a7b1;--line:#244552;--accent:#f5a524;--accent-ink:#1a1200;--water:#38bdf8;--good:#4ade80;--bad:#ff6b6b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);padding:0 16px 56px}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;line-height:1.1}
+h1{font-size:44px}h2{font-size:30px;margin-bottom:10px}h3{font-size:21px;margin-bottom:6px}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:18px}
+.bar .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{font:700 22px var(--display);letter-spacing:.03em}.brand span{color:var(--accent)}
+.sp{flex:1}
+.pill{font:500 13px var(--mono);border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.timer{font:500 20px var(--mono)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.btn{font:600 17px var(--body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:12px 22px;cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:9px 11px}
+textarea{min-height:70px;resize:vertical}
+label.f{display:block;font-weight:600;margin:14px 0 4px}
+.hint{color:var(--muted);font-size:14px}
+.tl{display:grid;grid-template-columns:64px 1fr;gap:8px 12px;margin:0;padding:0;list-style:none}
+.tl .t{font:500 13px var(--mono);color:var(--water);padding-top:3px}
+.menu{display:grid;gap:7px}
+.opt{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);cursor:pointer}
+.opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.opt input[type=checkbox]{margin-top:3px;width:20px;height:20px}
+.cost{font:500 14px var(--mono);white-space:nowrap}
+.rp{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.rp b{font:700 38px var(--display)}.over{color:var(--bad)}
+.cq{border-left:4px solid var(--line);padding:8px 12px;margin:8px 0;background:var(--surface2);border-radius:0 6px 6px 0}
+.cq.bad{border-left-color:var(--bad)}.cq.good{border-left-color:var(--good)}.cq.mid{border-left-color:var(--accent)}.cq.mid .k{color:var(--accent)}
+.cq .k{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.cq.bad .k{color:var(--bad)}.cq.good .k{color:var(--good)}
+.chaos{border:2px dashed var(--accent);border-radius:8px;padding:12px 16px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.big{font:700 64px var(--display);line-height:1}
+.steps{counter-reset:s;padding:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:8px;margin:8px 0}
+.steps li::before{content:counter(s);font:700 24px var(--display);color:var(--accent)}
+@media print{.bar .btn,.noprint{display:none!important}body{background:#fff;color:#000}.card{break-inside:avoid}}
+.role{border:1px solid var(--line);border-radius:8px;background:var(--surface2);padding:9px 12px;margin:8px 0}
+.prof{margin:8px 0 0;font-size:14px}.prof dt{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:7px}.prof dd{margin:1px 0 0}
+.tbar{height:6px;background:var(--line);margin:-18px 0 14px}.tbar i{display:block;height:100%;background:var(--water);transition:width .5s linear}.tbar i.low{background:var(--bad)}
+.timer{font:700 26px var(--mono)}
+.cost{color:var(--muted);font-size:12px;text-align:right;max-width:110px}
+details summary{padding:2px 0}
+</style><style>.chg{display:block;margin-top:4px;font-size:13.5px;line-height:1.35}.chg b{font-weight:700}.chg.up{color:var(--accent)}.chg.dn{color:var(--bad)}.chg.nt{color:var(--muted)}.chg.nw{display:inline-block;margin:0 6px 0 0;padding:1px 7px;border-radius:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:700}.opt.isnew{border-style:dashed}.newopts{margin-top:16px;padding:12px 14px;border:2px dashed var(--accent);border-radius:8px}.k2{font-weight:700;margin:12px 0 4px}.chl{margin:0;padding-left:20px}.chl li{margin:6px 0}</style><meta name="author" content="Ayham Fattoum"><meta name="copyright" content="© 2026 Ayham Fattoum. All rights reserved."><style>.copy{text-align:center;color:var(--muted);font-size:12px;padding:22px 16px 30px}@media print{.copy{padding-top:8px}}</style></head><body>
+<div id="app"></div><div class="copy">© 2026 Ayham Fattoum. All rights reserved. Operation Rising Water is an original teaching exercise.</div>
+<script>
+const DATA = {"TITLE": "Operation Rising Water", "CITY": "Northbridge", "SCENARIO": "Northbridge is a fictional city of 280,000 people on the River Wend. After three days of heavy rain, a severe flood is on its way. Your team is the Strategic Co-ordinating Group (Gold). Each of you plays one agency. Over six rounds of five minutes you decide what to do before the flood, during it, and in the months after.", "ROLES": [{"name": "Emergency services", "summary": "Emergency services commander, speaking for police, fire and rescue, and ambulance. You lead on rescue, safety and keeping order.", "priorities": "Save life first. Rescue people from the flood and from care homes. Protect people and property. Keep roads, bridges and scenes safe and keep order.", "cares": "A clear lead and fast decisions. The safety of your crews and officers. Control of who goes where.", "ethics": "Your duty is to protect life, and the law limits what you can force people to do. You are accountable to the public, so every use of power must be justified. Your services answer to different chiefs, so you must speak for all of them.", "tension": "You may find volunteers and crowds a safety risk, and the council and the Red Cross slow, when you want quick, firm decisions."}, {"name": "Council", "summary": "The local council. You run the flood plan, rest centres, housing and, later, recovery.", "priorities": "Keep essential services running. Shelter and care for vulnerable people. Rebuild the city and its economy.", "cares": "Your legal duties to every resident. Fairness and public money. Local politicians and a public that blames you.", "ethics": "You owe the same duty to all residents and you must account for every pound. You are tempted to promise quick recovery and to protect the council's reputation. Honesty about delays is part of your duty.", "tension": "You may clash with the police over speed and force, and with the Red Cross over who pays, who is in charge and who gets help first."}, {"name": "British Red Cross", "summary": "The British Red Cross. You bring volunteers, rest centres and a link to communities.", "priorities": "People's immediate needs, their dignity and wellbeing. Reach people that nobody else is reaching.", "cares": "Consent and dignity. The safety of your volunteers. The trust of the communities you serve.", "ethics": "Your principles are humanity, impartiality, neutrality, independence and voluntary service. You help according to need, and you do not take orders that compromise them. You are not a statutory responder, so you must make sure you are heard.", "tension": "You may clash with the police over control and sharing personal details, and with the council if you feel used as cheap capacity."}], "INTRO": [["The place", "Northbridge is a fictional city of 280,000 people on the River Wend. Its north estate has 1,400 homes and three care homes, and many residents are older. The city's water treatment works and the Castle Meads electricity substation both sit close to the river."], ["What happened last time", "In November 2015 the Wend flooded 1,900 homes. The official review was blunt. Police and the council gave different warnings. Volunteers with boats worked alone and two had to be rescued. Families waited months for somewhere to live, and were passed between insurers, the council and builders. Many residents said they had been managed, not helped."], ["Why there is tension now", "The flood plan was rewritten in 2018, but it has never been tested in a real flood. The agencies still remember 2015 differently. Police feel the council was slow. The council felt it took the blame for decisions that were not its alone. The Red Cross felt it was called late and used as spare capacity. Nobody wants to repeat 2015, but each agency has its own idea of what went wrong."], ["Who you are and why you are meeting", "You are the Strategic Co-ordinating Group, called Gold: three people who speak for the police, the council and the British Red Cross. You are meeting at the city's multi-agency co-ordination centre on Friday at midday because the Environment Agency has issued flood alerts for the Wend and a severe flood is possible overnight. Police and the council are local responders with legal duties to work together. The Red Cross is a voluntary organisation that brings volunteers and community links, but it has no legal duty, so it must make sure it is heard."], ["What you have to do", "Over six rounds you decide what to do before the flood, during it and in the months after. In each round you select every decision your team makes. You can choose one action or many, and the trade-offs are yours: too little leaves gaps, and too much stretches everyone and causes confusion. Your agencies will not always agree. You have up to five minutes for each round, and new information arrives during it. You can submit early, but you will miss what is still to come. At the end you get a score and a report on what each decision led to."]], "ROUNDS": [{"n": 1, "name": "The warning hours", "when": "Friday 12:00 to 18:00", "phase": "Response (before the flood)", "minutes": 5, "brief": {"Council": "You hold the flood plan and the list of care homes. The plan was last updated in 2018 and covers only 20,000 people. You do not yet know whether the flood will reach the north estate.", "British Red Cross": "Your volunteers are on stand-by, but nobody has asked you to do anything yet. You do not know which rest centres to open or where to send people.", "Emergency services": "Your police, fire and ambulance crews are already busy with the storm. If the flood comes they will be doing rescues, and they cannot also knock on every door later."}, "situation": [["12:00", "Three days of heavy rain. The Environment Agency has issued flood alerts for the River Wend. A severe flood is possible overnight. About 6,200 homes are at risk."], ["14:00", "The north estate has 1,400 homes and three care homes. Many residents are older people. Some local people say they will wait and see."], ["15:30", "The council flood plan was last updated in 2018. The water plan covers 20,000 people. Police and the council use different words in their warnings on social media."]], "menu": [["Brief all agencies now and agree who leads on what", 1, "Joint", 3, 1, "Agreeing roles before the flood is the cheapest form of co-ordination. Pitt (2008) found that unclear roles and no single lead slowed the 2007 response."], ["Agree one set of warning messages and use it on every channel", 1, "Joint", 3, 1, "One voice matters before the flood as much as during it. One shared message is a basic principle of joint working (JESIP)."], ["Door-to-door warnings for the north estate and the care homes", 2, "Emergency services", 3, 0, "Early action for the most vulnerable people is what triggers are for (Fattoum, 2023). A knock on the door in daylight is easier than a rescue in the dark."], ["Tell the care homes to prepare to move residents", 1, "Council", 2, 0, "Preparing early gives care homes time to call families, arrange transport and pack medicines. It does not move anyone yet, so it is cheap and reversible."], ["Pre-position boats, high-water vehicles and rescue teams", 2, "Emergency services", 2, 0, "Rescue teams in place before the water arrives save time later. The risk is spreading them too thinly before you know where the water goes."], ["Check the flood plan and the water and power plans, and fix the gaps", 2, "Council", 2, 0, "The plan covers 20,000 people and 140,000 may lose water. Finding that gap now is better than finding it at 22:30."], ["Ask the British Red Cross to prepare rest centres and volunteer teams", 1, "British Red Cross", 2, 1, "The voluntary sector was part of the 2007 response and Pitt asked for it to be built into plans. Asking early lets the British Red Cross open on time."], ["Wait for the Severe Flood Warning to be confirmed before acting", 0, "Joint", 0, 0, "Waiting for certainty uses up the hours you have. Early action triggered by a forecast, not by proof, is the lesson of Fattoum (2023), Figure 4.2."], ["Tell the media the situation is under control", 0, "Council", 0, 0, "False reassurance is risky. When the flood arrives people remember it, and later warnings are ignored. Honest, clear risk messages work better."], ["Start recovery planning now", 0, "Council", 1, 0, "Coppola says recovery starts during response, so this is not wrong. But in the warning hours, life safety and warnings come first."]], "conseq": [{"item": 0, "title": "Who leads?", "not_text": "Friday 21:00. At the first meeting nobody is sure who leads. Police ask the council for the care home list. The council thought the health service had it. It takes two hours."}, {"item": 1, "title": "Three warnings", "not_text": "Friday 20:00. Three versions of the warning are circulating. Phone lines are jammed with people asking which one is right."}, {"item": 2, "title": "Locked doors", "not_text": "Saturday 01:00. Residents who did not get a knock on the door stayed at home. Rescue teams are now needed on the north estate, in the dark."}, {"item": 3, "title": "No warning for the care homes", "not_text": "Saturday 01:00. The care homes had no warning that they might need to move. Staff say they would have called families and arranged transport earlier."}, {"item": 6, "title": "Rest centres open late", "not_text": "Saturday 02:00. The first 300 evacuees queue in the rain at a locked leisure centre. Volunteers say nobody told them where to go."}, {"item": 7, "title": "Hours lost", "yes_text": "Friday 21:00. You waited for the Severe Flood Warning. It came, but the roads out of the north estate had already started to flood and the first hours were lost.", "yes_bad": true}, {"item": 8, "title": "Under control?", "yes_text": "Saturday 03:00. When the north estate floods, people repeat 'under control' to reporters with bitter jokes. Trust falls and later warnings are ignored.", "yes_bad": true}], "want": {"Council": "You want to check and fix the plan first, and to get the care homes ready to move residents. You want to be sure of the facts before you frighten people.", "British Red Cross": "You want to be asked now to prepare rest centres and volunteer teams. You want people told where they can go and who will help them.", "Emergency services": "You want people on the north estate and in the care homes warned and told to leave early. You want boats and rescue teams in place before the water arrives."}, "resist": {"Council": "You will argue against moving everyone early. It costs money, and a false alarm makes people ignore the next warning.", "British Red Cross": "You will argue against forcing people to leave. People leave more willingly when they have a safe place to go and some choice.", "Emergency services": "You will argue against spending crew and officer time on long meetings and paperwork now."}, "injects": [{"id": "r1a", "has": [], "lacks": [1], "title": "Different words", "time": "15:45", "text": "Police have posted 'evacuate now' on social media. The council post says 'be ready'. Residents are confused and the phone lines are jammed.", "cause": "Your team has not yet agreed one set of warning messages.", "change": {"1": {"must": true, "tag": "Two different messages are already out."}, "8": {"tag": "This would make the confusion worse, not better."}, "7": {"tag": "Waiting leaves two conflicting messages in place."}}, "add": [["Correct the conflicting posts and publish one wording on one channel now", 1, "Joint", 3, 1, "Two different messages were already out. One wording, one channel and a plain instruction is the quickest way to stop the confusion (one voice)."], ["Open one shared phone line for residents, staffed by all three agencies", 1, "Council", 2, 1, "A single line stops people being passed between agencies and takes pressure off the jammed phone lines."]], "model": "Agree one wording and one channel straight away, correct the conflicting posts, and say plainly what people should do."}, {"id": "r1b", "has": [1], "lacks": [0], "title": "Everyone leading", "time": "15:45", "text": "Police and council teams are both knocking on doors on the north estate, some of them twice. The Red Cross volunteers do not know who to report to.", "cause": "Your team agreed a message but has not yet agreed who leads on what.", "change": {"0": {"must": true, "tag": "Teams are already overlapping and volunteers have no one to report to."}, "9": {"tag": "This can wait. First sort out who leads on the ground.", "g": 0}}, "add": [["Name one lead for each task and write it down for every team", 1, "Joint", 3, 1, "Overlapping teams show that nobody was in charge of each task. A named lead for each task fixes this."], ["Hold a short call with all three agencies every hour", 1, "Joint", 2, 1, "A regular short call lets agencies share what they have done and keep each other informed."]], "model": "Name one lead for each task and hold regular short calls."}, {"id": "r1c", "has": [0, 1], "lacks": [], "title": "Wait and see", "time": "15:45", "text": "A well-known local councillor tells a radio show that the flood will 'miss the north estate' and that people should not panic. Doorstep warnings are being ignored.", "cause": "Your team has agreed who leads and what to say. Now the message is being challenged.", "change": {"2": {"must": true, "tag": "Some people will only move if someone tells them in person."}, "5": {"g": 1, "tag": "This matters, but people must be reached first."}}, "add": [["Ask a trusted local voice to repeat the Environment Agency forecast, using the same words as the agencies", 1, "Council", 3, 1, "People listen to people they trust. A local voice repeating the agreed forecast counters the radio message without creating a second version."], ["Add extra door-to-door teams for the streets nearest the river", 1, "Emergency services", 2, 0, "The people closest to the river are in the most danger and the most likely to have heard the radio message."]], "model": "Correct it quickly, with the Environment Agency forecast and a trusted local voice. Keep the message the same across agencies."}]}, {"n": 2, "name": "The first 12 hours", "when": "Friday 18:00 to Saturday 06:00", "phase": "Response", "minutes": 5, "brief": {"Council": "Your staff are at home and the council offices may flood. You must find rest centres, transport and water for 140,000 people who may lose their mains supply.", "British Red Cross": "About 200 local people with boats have turned up at the river bridge. Nobody has asked them to come. Your own volunteers want to help too.", "Emergency services": "It is night. Your teams are on the north estate. They can see which streets are flooding and who is in danger, and you have no spare crews or officers."}, "situation": [["18:00", "Severe flood warnings are issued. Peak is forecast for 03:00. About 6,200 homes are at risk, including three care homes. Two agencies have issued different warnings for the north estate."], ["22:30", "The Wend Valley water treatment works floods and shuts down. 140,000 people will lose mains water within 12 hours. The water plan assumes 10 litres a day for 20,000 people."], ["01:00", "The Castle Meads substation is threatened. If it goes, 40,000 homes lose power, including pumping stations."], ["02:00", "Around 200 people with their own boats gather at the river bridge. Social media is calling for more. Nobody has asked them to come."]], "menu": [["Convene Gold now and open the multi-agency centre", 1, "Emergency services", 3, 1, "Convening the Strategic Co-ordinating Group (Gold) early, as a precaution, is what Pitt (2008, Rec. 43) recommends where there is a risk of serious flooding. Without a Gold group, nobody owns the public message."], ["Issue one joint public warning, one voice, all channels", 1, "Joint", 3, 1, "One joint warning with one voice. One voice is a basic principle of joint working (JESIP), and here two agencies were already giving different warnings for the north estate."], ["Boats and rescue teams to the north estate", 3, "Emergency services", 3, 0, "Saving lives comes first. The north estate is at the most immediate risk, and rescue teams are hard to find later."], ["Evacuate the three care homes", 2, "Council", 3, 0, "Care home residents are among the most vulnerable. Moving them before the water arrives avoids the harm shown in the consequence card."], ["Open rest centres and transport for evacuees", 2, "British Red Cross", 2, 0, "Evacuated people need shelter and transport, or the evacuation is only half done. It follows from deciding who to move."], ["Bottled water plan and distribution points for 140,000 people", 3, "Council", 2, 0, "140,000 people will lose mains water. Pitt (2008, Rec. 40) recommended raising the minimum amount of water provided in an emergency, to reflect a long loss of supply. Important, but it can start after the life-saving actions."], ["Temporary defences at Castle Meads substation", 2, "Council", 2, 0, "Protecting the substation protects the pumping stations and power for about 40,000 homes. Losing it would make everything else harder."], ["Request military support", 1, "Emergency services", 0, 0, "Premature. Military help is a last resort, requested for a defined task. Nothing yet shows that civil agencies cannot cope, so the request uses resources without a clear job."], ["Set up a volunteer co-ordination point", 1, "British Red Cross", 2, 1, "The 200 boat owners are an emergent group (Dynes, Type IV). A co-ordination point uses their help safely instead of ignoring them or ordering them about."], ["Start a small recovery planning cell from hour one", 1, "Council", 1, 0, "Coppola says short-term recovery starts during response, and Fattoum says to plan renewal early. A small cell is useful, but it does not save lives in the first 12 hours."]], "conseq": [{"item": 0, "title": "Two voices", "not_text": "Saturday. At 03:00 police and the council gave different instructions on the north estate. One care home was evacuated twice. Trust in the response is low and you spend time on repair.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 1, "title": "Rumours", "not_text": "Saturday. A rumour that the flood wall has failed sent 3,000 people to rest centres that were already full. Public anger is rising and staff are needed to calm crowds.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 3, "title": "Care homes", "not_text": "Saturday. Several care home residents needed hospital treatment after a night in cold water. The press asks why they were not moved. Health services are stretched.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 5, "title": "A thirsty city", "not_text": "Saturday. Shops have run out of water and people are fighting over what is left. Vulnerable people have had no clean water for 12 hours.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 8, "title": "Boats on their own", "not_text": "Saturday. The volunteer boat owners worked alone. Two boats capsized and needed rescue. Some volunteers entered unsafe homes. Volunteer groups now refuse to work with the council.", "not_rp": -1, "yes_text": "Saturday. The volunteer co-ordination point kept a list of 300 trained helpers. They are ready to help clear homes safely.", "yes_rp": 0}, {"item": 9, "title": "A head start", "not_text": null, "not_rp": 0, "yes_text": "Saturday. The recovery cell already has a list of 400 vulnerable households and a draft housing plan. You save time.", "yes_rp": 1}, {"item": 7, "title": "Whose troops?", "not_text": null, "not_rp": 0, "yes_text": "Saturday. Troops arrived without a defined task. They cleared some roads, but the army liaison officer and Silver used the word 'tactical' to mean different things for two days, and the north estate waited. Military help works when a clear task is agreed first.", "yes_rp": 0, "yes_bad": true}, {"item": 6, "title": "The substation held", "not_text": null, "not_rp": 0, "yes_text": "Saturday. The substation held and the pumping stations and power for about 40,000 homes stayed on. This kept hospitals and water treatment running.", "yes_rp": 0}], "want": {"Council": "You want the care homes evacuated, rest centres and transport ready, and a plan for bottled water. You also want the power substation protected.", "British Red Cross": "You want a volunteer point where helpers are listed, given safety advice and sent to tasks. You want rest centres opened and run by your volunteers.", "Emergency services": "You want rescue boats and teams sent to the north estate now, and one clear command so that orders do not conflict. You will ask for military help if you run out of people."}, "resist": {"Council": "You will argue against spending the night on public messages or recovery plans while people are still in danger.", "British Red Cross": "You will argue against turning helpers away. They are neighbours who know the streets, and refusing them damages trust.", "Emergency services": "You will argue against volunteers going into the water or into unsafe homes. Untrained helpers can become new casualties."}, "injects": [{"id": "r2a", "has": [], "lacks": [0], "title": "Silver, not Gold", "time": "23:30", "text": "The duty officer assumes Gold has been convened. Nobody has called it. Public information has gone quiet and agencies are acting on their own.", "cause": "Your team has not yet convened Gold.", "change": {"0": {"must": true, "tag": "Nobody has called Gold, and everyone thinks someone has."}, "1": {"must": true, "tag": "Public information has stopped."}, "6": {"g": 1, "tag": "Still useful, but it needs a command structure to organise it."}}, "add": [["Brief the Silver commanders and agree who they report to", 1, "Emergency services", 2, 1, "Silver commanders were working without direction. A briefing links them to the strategic group."], ["Restart public information with one voice and a fixed update time", 1, "Joint", 3, 1, "With no Gold, nobody owned the public message. A single voice with fixed times rebuilds trust."]], "model": "Convene Gold now, brief Silver, and restart public information through one voice."}, {"id": "r2b", "has": [0, 3], "lacks": [], "title": "Two leaders", "time": "23:30", "text": "Police and the health service each say they lead on the care home evacuation. Two sets of instructions reach the care homes.", "cause": "Your team chose to evacuate the care homes, and more than one agency is now involved.", "change": {"3": {"must": true, "tag": "Two sets of instructions are reaching the homes."}, "0": {"tag": "Gold can settle who leads."}}, "add": [["Agree one lead for the care home evacuation and send one set of instructions", 1, "Joint", 3, 1, "Two leaders gave two sets of instructions. The lead agency is usually the main source of co-ordination on the ground, so one has to be agreed."], ["Send a named liaison officer to each care home", 1, "Council", 2, 1, "A named person on site is a reliable point of contact for staff and relatives."]], "model": "Agree one lead for the care home evacuation straight away and send one set of instructions."}, {"id": "r2c", "has": [0], "lacks": [3], "title": "Boats on the water", "time": "23:30", "text": "Some of the 200 boat owners have set off on their own towards the north estate. One boat has hit debris and its crew need rescuing.", "cause": "Your team has convened Gold but has not yet moved the care homes. People are still at risk and volunteers are acting alone.", "change": {"8": {"must": true, "tag": "Boat owners are already on the water."}, "7": {"tag": "Still not needed. The problem is co-ordination, not a shortage of rescuers."}, "2": {"tag": "Rescue teams may now also be needed for the volunteers."}, "3": {"must": true, "tag": "The care homes have not been moved and the water is rising."}}, "add": [["Send a rescue team to the boat crew in trouble", 1, "Emergency services", 2, 0, "People are now at risk who were not an hour ago. They have to be reached first."], ["Give boat owners a safe job: ferrying supplies and passing messages, under a rescue team lead", 1, "British Red Cross", 3, 1, "Emergent volunteers can add capacity if they are given a role and a lead, instead of being ignored or ordered about."]], "model": "Bring the boat owners into a co-ordination point with a safe task, and do not forget the people who are most at risk."}]}, {"n": 3, "name": "Keeping the response going", "when": "Saturday 06:00 to Sunday 18:00", "phase": "Response (sustaining)", "minutes": 5, "brief": {"Council": "900 people are in three rest centres and two are nearly full. Your own staff are flooded. The water treatment works is still off.", "British Red Cross": "Your volunteers run the rest centres. They see people who are tired, frightened and short of medicines and information. Donations are starting to arrive in lorries.", "Emergency services": "Your crews and officers have worked all night and many have not slept. Rumours of looting are spreading and people are asking for patrols."}, "situation": [["Sat 06:00", "The water peaked at 03:00 and is still high. 3,100 people have left their homes. Rescue teams have worked 12 hours without a break."], ["Sat 14:00", "900 people are in three rest centres and two are nearly full. Several evacuees need regular medicines or treatment. Some care home residents are still in hospital."], ["Sun 06:00", "Power is back in most of the city. The water treatment works is still off and bottled water is running low."], ["Sun 12:00", "Responders have worked 30 hours. Some are making mistakes. Nobody has planned the rota for the next 48 hours."]], "menu": [["Set a shift rota and a rest plan for responders for the next 48 hours", 1, "Joint", 2, 0, "Tired responders make mistakes. Bigley and Roberts (2001) show that organisations in a crisis need reserves and a flexible structure, not only effort."], ["Open more rest centres and share the care duties with the British Red Cross", 2, "British Red Cross", 3, 1, "Shelter is a council duty and the British Red Cross can run it. Sharing the work between them avoids overflowing centres and uses the voluntary sector as Pitt recommended."], ["Find and contact vulnerable residents, using care home, health and social care lists", 2, "Council", 3, 1, "Vulnerable people are the highest risk. Sharing lists between agencies finds those that any one agency would miss."], ["Give one public update at fixed times, with one phone line", 1, "Joint", 3, 1, "Predictable updates replace rumour. One voice is a basic principle of joint working (JESIP) and links to Weick on shared understanding."], ["Set up a donations point and say what is needed", 1, "British Red Cross", 2, 1, "Unrequested donations and helpers can arrive in great numbers (Dynes: convergence). A named point and a list of needs turns them into help."], ["Arrange safe water for care homes and dialysis patients first", 2, "Council", 3, 0, "Pitt (2008, Rec. 40) recommended raising the minimum amount of water provided in an emergency, to reflect a long loss of supply, and the most vulnerable are hit first."], ["Search every flooded street again", 2, "Emergency services", 2, 0, "Searching is the right thing to do while people may be missing. It is sound, but it uses tired teams and is less urgent than shelter and water now."], ["Send all evacuees home as soon as the water falls", 0, "Council", 0, 0, "Premature. Houses are wet, contaminated and without power. Coppola warns against rushing back to normal when the risk has not gone."], ["Start a street-by-street count of damaged homes", 1, "Council", 2, 0, "Recovery starts during response (Coppola). A list of flooded homes by address makes case work possible later."], ["Ask volunteers to stay away until they are trained", 1, "Emergency services", 1, 0, "Safety is real, but turning helpers away wastes help and trust. Dynes would say to co-ordinate emergent groups, not refuse them."]], "conseq": [{"item": 0, "title": "A tired crew", "not_text": "Monday. A tired driver crashes a rescue vehicle. Nobody is badly hurt, but two crews are out for the day."}, {"item": 1, "title": "Overflow", "not_text": "Monday. Two rest centres overflowed. Evacuees slept in corridors and the council was blamed. The British Red Cross says it was not asked to help until Sunday night."}, {"item": 2, "title": "Missed on oxygen", "not_text": "Monday. Two vulnerable residents on oxygen at home were found on day 3. Nobody knew they were there."}, {"item": 3, "title": "Rumours travel faster", "not_text": "Monday. Rumours spread faster than official news. Trust in the response is low and some residents will not follow advice."}, {"item": 4, "title": "Donations", "not_text": "Monday. Donations block the rest centres. Staff spend hours sorting clothes instead of helping people.", "yes_text": "Monday. The donations point is well organised and publishes a list of needs. Volunteers sort it in a day and the rest centres are stocked."}, {"item": 5, "title": "No safe water", "not_text": "Monday. Care homes and dialysis patients had no safe water for 24 hours. Two patients went to hospital."}, {"item": 7, "title": "Home to mud", "yes_text": "Monday. Families who went home found no power and mud-covered, contaminated houses. Some came back to the rest centres in the dark. Trust fell.", "yes_bad": true}, {"item": 8, "title": "A list of homes", "yes_text": "Monday. The street count gives the council a list of 5,100 flooded homes, by address. Case work can start on Tuesday."}, {"item": 9, "title": "Helpers on their own", "yes_text": "Monday. Volunteers were told to stay away. Many went anyway and worked alone, without safety advice. Two entered unsafe houses.", "yes_bad": true}], "want": {"Council": "You want vulnerable people found and given safe water first, and a count of flooded homes started. You also want evacuees home soon, to free the rest centres.", "British Red Cross": "You want more rest centres, an organised donations point, and one regular update at set times so people know what is happening.", "Emergency services": "You want to search the flooded streets again in case anyone is missing, and to patrol empty homes."}, "resist": {"Council": "You will argue against open-ended spending on extra services before you know how many people need them.", "British Red Cross": "You will argue against sending people home to wet, unsafe houses, and against sending volunteers away.", "Emergency services": "You will argue against giving crews and officers jobs that are not emergency work, such as running rest centres or sorting donations."}, "injects": [{"id": "r3a", "has": [], "lacks": [2], "title": "Missed on oxygen", "time": "Sat 20:00", "text": "The health service tells you that three people on home oxygen and two dialysis patients have not been contacted since Friday. One has called 999 from a flooded ground floor.", "cause": "Your team has not yet set out to find and contact vulnerable residents.", "change": {"2": {"must": true, "tag": "People on home oxygen and dialysis have not been reached."}, "5": {"must": true, "tag": "Dialysis patients need safe water."}, "6": {"g": 1, "tag": "Lower priority than reaching people who have not been contacted."}}, "add": [["Ask the health service for its list of people on home oxygen and dialysis, and call each one", 1, "Council", 3, 1, "Health records are the quickest way to find people who need medical equipment and may not be able to ask for help."], ["Send welfare teams to the homes of anyone you cannot reach by phone", 1, "British Red Cross", 2, 0, "Some people will not answer the phone. A visit is the only way to know they are safe."]], "model": "Use the health service lists, call everyone on them, and visit anyone you cannot reach."}, {"id": "r3b", "has": [2], "lacks": [4], "title": "Mountains of donations", "time": "Sat 20:00", "text": "Lorries of donated clothes and food arrive at the rest centres with nowhere to store them. Staff are spending hours sorting instead of helping people.", "cause": "Your team has not yet set up a place for donations.", "change": {"4": {"must": true, "tag": "Lorries are arriving and staff are being pulled away from care."}, "9": {"tag": "Volunteers could help with the donations if they are organised. Asking them all to stay away wastes them.", "g": 0}}, "add": [["Open one donations point away from the rest centres and publish a list of what is needed", 1, "British Red Cross", 3, 1, "A separate site keeps the rest centres clear. A list stops the wrong goods arriving."], ["Ask trained volunteers to run the sorting so staff can go back to caring for people", 1, "British Red Cross", 2, 1, "Volunteers can take on the sorting, freeing staff for people who need care."]], "model": "Open one donations point away from the rest centres, publish a list of what is needed, and ask volunteers to run it."}, {"id": "r3c", "has": [2, 4], "lacks": [], "title": "Looting rumours", "time": "Sat 20:00", "text": "Rumours of looting spread on social media. Some people refuse to leave their homes. Police are asked to patrol the south estate, which would take officers from the rescue effort.", "cause": "Your team has the main needs covered. Now a rumour is threatening to undo it.", "change": {"3": {"must": true, "tag": "Rumours are spreading faster than facts."}, "6": {"g": 1, "tag": "Lower priority now: police officers are needed elsewhere."}, "7": {"tag": "Sending people home now would leave homes empty and feed the rumours."}}, "add": [["Emergency services and council post facts on social media, including where belongings are safe", 1, "Emergency services", 3, 1, "A fact-based message from trusted sources stops a rumour from becoming a reason not to leave."], ["Agree a small number of patrols so rescue teams are not pulled away", 1, "Emergency services", 2, 1, "A visible but limited patrol reassures people without leaving the rescue effort short of staff."]], "model": "Give a clear, fact-based message and balance patrols with rescue."}]}, {"n": 4, "name": "The water goes down", "when": "Days 3 to 10", "phase": "Early recovery", "minutes": 5, "brief": {"Council": "You now lead recovery. About 15% of your staff are flooded, your offices are damaged, and the media keeps asking when life will be normal.", "British Red Cross": "Your volunteers are visiting flooded homes. Some families are being passed between insurers, the council and builders, and nobody is looking after them.", "Emergency services": "The water is going down. Streets are open again, people want to go home, and many contractors and volunteers are on site."}, "situation": [["Day 3", "The river falls. 5,100 homes are flooded. 900 people are in rest centres. 140,000 people still rely on bottled water, which will last about 12 more days."], ["Day 4", "The council offices are flooded. About 15% of council staff are flooded at home or cannot reach work."], ["Day 5", "About 40 contractors and insurance firms arrive, each working alone. Volunteers are clearing homes and some are unsafe."], ["Day 7", "A local politician says everyone must be back home within two weeks. The media asks: when will life be normal?"]], "menu": [["Set up a Recovery Co-ordinating Group chaired by the council", 1, "Council", 3, 1, "A Recovery Co-ordinating Group led by the council (Pitt, 26.15 and 26.16) avoids the 'five plans' problem, where each agency recovers on its own."], ["Single point of contact and case workers for flooded households", 3, "Joint", 3, 1, "A single point of contact answers the recovery gap and the secondary stress found by Whittle et al. (2010). Households were being passed between insurers, council and builders."], ["Temporary housing and hotel placements", 3, "Council", 3, 0, "The rest centres are closing and hundreds of households have nowhere to live. Housing is the most urgent recovery need."], ["Debris and strip-out plan with contractors and safety rules", 2, "Council", 2, 0, "Strip-out and debris clearance have to start, with safety rules, because contractors and volunteers working alone are already a risk."], ["Volunteer co-ordination with basic training", 1, "British Red Cross", 2, 1, "Volunteers are already clearing homes, some unsafely. Co-ordination with basic training keeps their help and reduces the risk."], ["Business helpline and small grants", 2, "Council", 1, 0, "Businesses matter, but within ten days households need housing and a clear route to help first. Business support fits Round 3 better."], ["Public message on a realistic recovery timeline", 1, "Council", 3, 0, "An honest timeline counters the pull to go back to normal, which Coppola calls the greatest obstacle in recovery. A promise of two weeks will be broken and trust will fall."], ["Mutual aid: request staff from neighbouring councils", 2, "Council", 2, 1, "Staff in about 15% of council posts are affected, and an established organisation can lose its own capacity (Dynes). Mutual aid, which Pitt found mostly ad hoc, needs planning."], ["Re-open schools on temporary sites", 2, "Council", 1, 0, "Schools bring a sense of normality, but housing and a point of contact for families come first at this stage."], ["Review rebuilding standards before repairs start", 1, "Council", 2, 0, "Rebuilding as before keeps the same weakness (Coppola). Reviewing standards before repairs start is cheap and stops the damage being repeated."]], "conseq": [{"item": 0, "title": "Five plans", "not_text": "Month 3. Five agencies are running their own recovery plans. Households have had four different letters. The council is blamed for the confusion.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 1, "title": "Passed from desk to desk", "not_text": "Month 3. About 200 families say they were passed between insurers, the council and builders. A support charity warns that some are close to breaking.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 2, "title": "Nowhere to live", "not_text": "Month 3. The rest centres have closed. About 300 households have no place to live and some are sleeping in cars.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 6, "title": "A broken promise", "not_text": "Month 4. The 'home in two weeks' promise is long broken. Families still in damaged homes are on the news. Fewer people come to community meetings.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 9, "title": "Rebuilt the weakness", "not_text": "Month 4. Repairs began fast, to the old standard. Some homes flooded again in a small storm. Residents say 'we rebuilt the same weakness'.", "not_rp": -1, "yes_text": null, "yes_rp": 0}, {"item": 7, "title": "The loan ends", "not_text": null, "not_rp": 0, "yes_text": "Month 3. The 30 staff on loan from neighbouring councils go home at the end of the month. You must decide who replaces them.", "yes_rp": 0}, {"item": 4, "title": "A repair group", "not_text": null, "not_rp": 0, "yes_text": "Month 3. Volunteers trained in Round 2 formed a local repair group. Its leader asks to join recovery meetings.", "yes_rp": 1}], "want": {"Council": "You want a recovery group chaired by the council, temporary housing, and staff borrowed from neighbouring councils. You want to show quick progress.", "British Red Cross": "You want one contact and a case worker for each flooded household, and honest information about how long recovery will take.", "Emergency services": "You want a plan for clearing debris with clear safety rules, and you want unsafe areas controlled so people do not enter unsafe homes."}, "resist": {"Council": "You will argue against slow reviews, such as checking rebuilding standards, that delay repairs and make the council look slow.", "British Red Cross": "You will argue against promises such as 'home in two weeks' that you know will be broken.", "Emergency services": "You will argue against volunteers and contractors working alone without safety rules."}, "injects": [{"id": "r4a", "has": [], "lacks": [6], "title": "The two-week promise", "time": "Day 7", "text": "A local politician has told the news that everyone will be back home within two weeks. The media asks: when will life be normal?", "cause": "Your team has not yet given a realistic timeline for recovery.", "change": {"6": {"must": true, "tag": "A promise that cannot be kept is already on the news."}, "2": {"tag": "Still essential. Most flooded homes will not be repaired in two weeks."}}, "add": [["Give an honest timeline in a joint statement, and say what you do not yet know", 1, "Council", 3, 1, "The pull to return to normal is the greatest obstacle in recovery. Honesty now avoids anger later when the promise breaks."], ["Meet the politician privately and agree one shared message", 1, "Council", 2, 1, "Politicians and agencies need to say the same thing."]], "model": "Say the truth about timelines, together, and agree one message."}, {"id": "r4b", "has": [6], "lacks": [7], "title": "Local capacity is hit", "time": "Day 7", "text": "Twenty council staff are flooded at home. Services that the recovery plan relies on are stalling.", "cause": "Your team has not yet asked neighbouring councils for help.", "change": {"7": {"must": true, "tag": "Services are stalling because staff are missing."}, "0": {"tag": "The group's work relies on staff who are currently not at work."}, "8": {"g": 0, "tag": "Not now: the council cannot manage this on top of its core services."}}, "add": [["Decide which council services must keep running and which can wait", 1, "Council", 3, 0, "With fewer staff, something has to give. Choosing deliberately is better than letting services fail at random."], ["Ask the Red Cross and voluntary groups to take on some tasks for now", 1, "British Red Cross", 2, 1, "Voluntary organisations can take on tasks while the council recovers its own capacity."]], "model": "Ask neighbouring councils for mutual aid and decide which services must keep running."}, {"id": "r4c", "has": [6, 7], "lacks": [], "title": "The possessions story", "time": "Day 7", "text": "A family says everything downstairs was thrown away, including items that could have been cleaned. A news crew is on their street.", "cause": "Your team has the timeline and staffing covered. Now household information is the problem.", "change": {"3": {"must": true, "tag": "Items are being thrown away before they can be listed for insurance.", "g": 3}, "1": {"tag": "Households need one place for guidance."}}, "add": [["Give households clear guidance on what to keep and how to photograph and list items for insurance", 1, "Joint", 3, 1, "Early, clear guidance protects households' insurance claims and their belongings."], ["Brief the debris contractors and volunteers on the same guidance", 1, "Council", 2, 1, "Guidance only works if the people doing the clearing follow it."], ["Say publicly that the early guidance was not clear enough, and put it right", 1, "Council", 2, 0, "Owning the failure openly rebuilds trust with affected households."]], "model": "Give households clear guidance, brief the clearers, and own the failure openly."}]}, {"n": 5, "name": "The recovery gap", "when": "Months 3 to 8", "phase": "Recovery and renewal", "minutes": 5, "brief": {"Council": "1,800 households are still out of their homes. Hotel funding ends in six weeks and it is winter. Government has offered a national fund, with bids due in eight weeks.", "British Red Cross": "You are seeing families who are stressed, in debt and isolated. They are tired of telling their story to each agency in turn.", "Emergency services": "The flood response is over. You hold the records of calls, rescues and reports from the first days. They show where the plan failed and who was missed."}, "situation": [["Month 3", "1,800 households are still out of their homes. Hotel funding ends in six weeks. It is winter."], ["Month 4", "300 small businesses closed after the flood. About 40 may not reopen. Insurance claims are being disputed and some households have had no reply for weeks."], ["Month 5", "Government offers a national recovery fund. Bids are due in eight weeks."], ["Month 6", "A local campaign wants the flood walls rebuilt exactly as before, and dredging. Other residents ask to be relocated. Winter storms are coming."]], "menu": [["Long-term housing plan: repair support and rent help for 1,800 households", 3, "Council", 2, 0, "A long-term housing plan answers the 1,800 households still out of their homes. It is costly, so it competes with other priorities."], ["Case management for every household until they are home", 2, "Joint", 3, 1, "Case management until households are home closes the gap between council arrangements and the private sector (Whittle et al.)."], ["Wellbeing and community support service", 2, "British Red Cross", 3, 0, "Stress is a normal reaction to abnormal events, and poorly managed recovery can cause more harm than the flood (Whittle et al.). Wellbeing support addresses this."], ["Business recovery grants", 2, "Council", 1, 0, "Business grants help, but at this stage households who are still displaced are the larger need."], ["Flood-resilient repair standards with funding (raised sockets, flood doors)", 2, "Council", 3, 0, "Flood-resilient repair uses the post-disaster window to build back better (Coppola), so the same homes are not flooded again."], ["Voluntary relocation option for the 400 worst-hit homes", 3, "Council", 2, 0, "A voluntary relocation offer for the worst-hit homes is a transformation, not just a bounce-back (Whittle et al.; Pitt: regeneration). It is costly and has to stay voluntary."], ["Joint bid for the national fund with a clear plan", 1, "Council", 2, 1, "A joint bid with a clear plan uses the policy window (Kingdon; Smith et al.). Funding goes to those who are ready."], ["Joint review with insurers and builders on claim delays", 1, "Joint", 2, 1, "Insurers and builders sit outside the Civil Contingencies Act, so a joint review is the practical way to deal with claim delays."], ["Ask residents' groups to help design the recovery plan", 1, "Joint", 2, 1, "Recovery works better when the people affected help shape it (Whittle et al., 2010). It also rebuilds trust that the response may have damaged."], ["Publish a simple public progress report every month", 1, "Council", 2, 1, "A simple monthly progress report keeps the timeline honest and rebuilds trust, at low cost."]], "conseq": [{"item": 0, "title": "Still in hotels", "not_text": "Month 7. Hotel funding has ended. About 600 households with no long-term plan are in unsuitable temporary housing."}, {"item": 2, "title": "At the end of their rope", "not_text": "Month 7. Referrals to GPs for stress and anxiety rise. Frontline staff say people are 'at the end of their rope'."}, {"item": 3, "title": "Empty high street", "not_text": "Month 7. Forty more businesses have closed. The high street has empty units and fewer customers."}, {"item": 6, "title": "The bid", "not_text": "Month 7. Your bid arrived incomplete and the fund went to a neighbouring city with a joint plan.", "yes_text": "Month 7. Your joint bid passed the first stage. The reviewers praised the clear plan and the partnership."}, {"item": 7, "title": "Waiting for insurers", "not_text": "Month 7. 300 households are still waiting for an insurance decision. The council keeps being blamed."}, {"item": 8, "title": "Done to, not with", "not_text": "Month 7. Residents say recovery is being done to them, not with them. Fewer people come to meetings."}, {"item": 9, "title": "Silence", "not_text": "Month 7. Rumours spread that recovery has been abandoned. The council is blamed for not saying what is happening."}], "want": {"Council": "You want a long-term housing plan and a joint bid for the national fund. You want repairs started quickly, because residents are angry about delays.", "British Red Cross": "You want a case worker for every household until they are home, and a wellbeing service. You want residents to help design the recovery plan.", "Emergency services": "You want your records used to learn what went wrong. You want a joint review with insurers and builders, and residents' groups involved in the plan."}, "resist": {"Council": "You will argue against paying for options that cost a lot and cannot help everyone, such as moving the worst-hit homes.", "British Red Cross": "You will argue against spending the money only on buildings and businesses while people's wellbeing is ignored.", "Emergency services": "You will argue against spending money on schemes that cannot show they will keep people safer in the next flood."}, "injects": [{"id": "r5a", "has": [], "lacks": [6], "title": "A policy window", "time": "Month 5", "text": "A minister visits and says money and political will exist for one big visible scheme if you can show a plan within a week.", "cause": "Your team has not yet started a joint bid for the national fund.", "change": {"6": {"must": true, "tag": "A plan is needed within a week."}, "4": {"tag": "A strong fit for a bid: it is visible and protects the worst-hit streets."}, "3": {"g": 0, "tag": "Not for this window: the minister wants one big scheme."}}, "add": [["Prepare a one-week outline plan and ask the minister's team what the bid must show", 1, "Council", 3, 1, "Policy windows open briefly when a problem, an idea and political pressure meet. A ready outline lets you use it instead of watching it close."], ["Ask residents' groups what they would want the money spent on", 1, "Joint", 2, 1, "A bid that reflects residents' priorities is stronger and more likely to be accepted."]], "model": "Have a ready plan and a joint bid so the policy window can be used, not just watched."}, {"id": "r5b", "has": [6], "lacks": [8], "title": "Petition", "time": "Month 5", "text": "A petition with 5,000 names asks for dredging only. The evidence says dredging alone will not protect the worst-hit streets.", "cause": "Your team has not yet involved residents' groups in designing the recovery plan.", "change": {"8": {"must": true, "tag": "Residents are speaking through a petition, not through the plan."}, "5": {"tag": "Many residents are asking for this."}}, "add": [["Meet the petition organisers, share the evidence, and explain what dredging can and cannot do", 1, "Council", 3, 1, "Residents deserve to hear what the evidence says. Meeting them builds trust without pretending dredging will solve everything."], ["Hold a public meeting on what will protect the worst-hit streets", 1, "Joint", 2, 1, "An open meeting lets residents hear the options and say what they want."]], "model": "Listen, explain honestly what the evidence says about dredging, and offer what will protect the worst-hit streets."}, {"id": "r5c", "has": [6, 8], "lacks": [], "title": "Waiting for insurers", "time": "Month 5", "text": "About 200 households say their insurer has not replied for six weeks. The council's hotel funding for them ends soon.", "cause": "Your team has a bid and residents involved. Households are still stuck.", "change": {"7": {"must": true, "tag": "Claims are stalling and hotel funding is about to end."}, "1": {"tag": "Case workers are the way to chase claims for each household."}}, "add": [["Set up a claims help desk with insurers' staff in the council's recovery centre", 1, "Joint", 3, 1, "Insurers and builders are outside the council's legal duties. Bringing them in one room closes the gap households fall into."], ["Ask for hotel funding to be extended for households with unresolved claims", 1, "Council", 2, 0, "Ending funding while claims are stuck pushes households into harm that is not their fault."]], "model": "Bring insurers into the recovery centre, and extend help for households whose claims are stuck."}]}, {"n": 6, "name": "Before the second storm", "when": "Month 8, ten days before the forecast storm", "phase": "Renewal and preparedness", "minutes": 5, "brief": {"Council": "30% of the north estate is not registered for flood warnings. Many households are now in temporary housing. The plan has not been updated.", "British Red Cross": "You know the communities. Many people who most need warnings are on no list: older people, people in temporary housing and people who do not speak English well.", "Emergency services": "Heavy rain is forecast in ten days. In the first flood, action waited for meetings. Next time your crews and officers will be first on the scene."}, "situation": [["Day 1", "The Environment Agency forecasts heavy rain in ten days. The river could again reach the level of the first flood."], ["Day 2", "About 30% of the north estate is not registered for flood warnings. Many households are now in temporary housing and are not on any list."], ["Day 4", "The first-flood review found that agencies waited for a meeting before acting. The flood plan has not been updated yet."], ["Day 6", "The repaired flood wall has one weak section. 1,100 households are still in the worst-hit streets."]], "menu": [["Update the flood plan with what you learned and share it with every agency", 2, "Joint", 3, 1, "Recovery and preparedness are one cycle (Fattoum, 2023). A plan that does not use what the first flood taught will be broken the same way."], ["Register every household, including those in temporary housing, for warnings, and test the system", 2, "Council", 3, 0, "People who are not on the list get no warning. Fixing the list is the cheapest way to protect the most vulnerable."], ["Run a short joint exercise with police, council and the British Red Cross", 1, "Joint", 2, 1, "An exercise tests roles and finds gaps before the storm does. It builds shared understanding, as Weick would describe it."], ["Agree trigger points: which warning level starts which action, with no meeting needed", 2, "Joint", 3, 1, "Triggers remove the delay of waiting for a meeting. This is the point of Fattoum (2023), Figure 4.2: act early on the forecast."], ["Brief care homes and sheltered housing and agree early evacuation", 1, "Council", 2, 0, "Care homes were the first to be harmed in the first flood. A brief and agreed moves in advance protect them."], ["Set up community flood wardens in the worst-hit streets", 2, "British Red Cross", 2, 1, "Wardens extend the warning system to people the agencies cannot reach. They need training and links to the agencies, which is why co-ordination matters."], ["Agree rest centres, transport and volunteer roles with the British Red Cross in advance", 1, "British Red Cross", 2, 1, "The first flood showed that late agreements cost hours. Agreeing in advance is the voluntary sector linkage Pitt asked for."], ["Wait and see how bad the forecast becomes before changing plans", 0, "Joint", 0, 0, "Waiting repeats the first flood. The lesson of triggers is to act on the forecast, not on proof."], ["Say little about the flood risk, so as not to worry people", 0, "Council", 0, 0, "People who do not know the risk do not prepare. Honest, clear information is part of preparedness."], ["Ask the government for emergency funds to rebuild the weak section of wall", 1, "Council", 1, 0, "The wall matters, but ten days is too short to build it. Money cannot replace warnings, plans and co-ordination before the storm."]], "conseq": [], "want": {"Council": "You want the warning list fixed and tested, the plan updated and the care homes briefed. You also want to ask government for money to repair the flood wall.", "British Red Cross": "You want local flood wardens in the worst-hit streets, and rest centres and volunteer roles agreed before the storm.", "Emergency services": "You want agreed triggers, so a warning level starts action at once, and a joint exercise to test who does what."}, "resist": {"Council": "You will argue against spending on actions that may turn out to be false alarms, and against frightening residents.", "British Red Cross": "You will argue against saying little about the risk. People who are not told cannot prepare.", "Emergency services": "You will argue against waiting to see how bad the forecast becomes."}, "injects": [{"id": "r6a", "has": [], "lacks": [1], "title": "A false alarm", "time": "Day 5", "text": "A test alert goes to the whole city by mistake. People are angry and some switch off alerts. Later you find that 30% of the north estate never received any alert.", "cause": "Your team has not yet registered every household for warnings or tested the system.", "change": {"1": {"must": true, "tag": "The alert system has not been checked and has failed."}, "8": {"tag": "Saying nothing would lose even more trust."}}, "add": [["Apologise, explain the mistake and say how future alerts will be checked", 1, "Joint", 3, 1, "Warnings only work if people still trust them. A plain apology and a clear fix protect that trust."], ["Run a proper test with a small group of streets first", 1, "Council", 2, 0, "Small tests find problems before they affect the whole city."]], "model": "Correct it quickly, apologise, and explain how mistakes will be avoided."}, {"id": "r6b", "has": [1], "lacks": [3], "title": "The weak wall", "time": "Day 5", "text": "Engineers say the weak section of wall could fail at the forecast river level. Nobody has agreed which warning level triggers an evacuation of the 1,100 households.", "cause": "Your team has not yet agreed trigger points.", "change": {"3": {"must": true, "tag": "No warning level triggers an evacuation."}, "9": {"g": 0, "tag": "Repairs will not finish in ten days. Plan for the wall to fail."}}, "add": [["Agree that a named river level means evacuate the 1,100 households, with no meeting needed", 1, "Joint", 3, 1, "The first-flood review found that agencies waited for a meeting before acting. Pre-agreed triggers remove that delay."], ["Place temporary barriers and a watch team at the weak section", 1, "Council", 2, 0, "A watch team gives early warning of failure and buys time."]], "model": "Agree triggers now, with no meeting needed, and protect the weak section."}, {"id": "r6c", "has": [1, 3], "lacks": [], "title": "Two sets of advice", "time": "Day 5", "text": "Two flood wardens give different advice to people on the same street. One says move now, the other says wait.", "cause": "Your team has the warnings and triggers in place. Now the street-level advice is inconsistent.", "change": {"5": {"must": true, "tag": "Wardens are giving different advice."}, "0": {"tag": "The plan needs to cover what wardens say."}}, "add": [["Agree one guidance sheet for wardens and brief them together", 1, "Joint", 3, 1, "Single, shared advice is the point of one voice. Wardens need the same instructions."], ["Put wardens in the multi-agency information loop, with a direct line", 1, "Joint", 2, 1, "Wardens hear first what is changing on the ground. They need to hear it from the agencies too."]], "model": "Agree one guidance sheet for wardens and put them in the multi-agency information loop."}]}], "EPILOGUE": [{"round": 6, "item": 1, "title": "Warnings", "yes_text": "The second storm arrives. Nearly every household gets a warning in time. About 40 homes flood and no one is hurt.", "not_text": "The second storm arrives. Many households, especially in temporary housing, were not registered and get no warning. About 300 homes flood and people are caught unprepared."}, {"round": 6, "item": 3, "title": "Early action", "yes_text": "Pre-agreed triggers start the plan at once. Rescue teams, rest centres and care home moves are in place before the water arrives.", "not_text": "Agencies wait for a meeting before acting. Rescue teams and rest centres are ready two hours late."}, {"round": 5, "item": 5, "title": "The worst-hit street", "yes_text": "About 320 households chose to relocate. The worst-hit street is now a flood park. Fewer homes flood.", "not_text": "The same 400 homes flood again. The council is blamed for not offering a choice."}, {"round": 5, "item": 4, "title": "Repairs that last", "yes_text": "Homes with raised sockets and flood doors are back in use within days.", "not_text": "Households that repaired as before are out of their homes again for months."}, {"round": 5, "item": 1, "title": "A single contact", "yes_text": "Case workers report almost every household is home or has a firm date. Complaints fall.", "not_text": "A survey shows that many households still do not know who to call. Distress remains high."}], "FINAL": {"name": "Your headline", "minutes": 5, "task": "In one sentence, write the decision your team would defend to the public if only one choice made the news. Read it out. The room votes for the most convincing."}, "DEBRIEF": ["Where did the priorities or values of your three agencies clash, and how did you settle it?", "Which round put you under the most pressure, and what did you drop when time ran out?", "Who led in each round, and how did the lead agency change from the first hours to the recovery?", "Which consequence card surprised you most, and which earlier decision caused it?", "Where did a response decision limit a recovery choice?", "What would you set as an early trigger for the next flood?"]};
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+const KEY='rw_solo_v3';
+const NR=DATA.ROUNDS.length,LOW=3,HIGH=6,ROUND_MS=5*60000,CHAOS_AT=150000;
+const ROLE=['Emergency services','Council','British Red Cross'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const R=n=>DATA.ROUNDS[n-1];
+const fresh=()=>({team:'',names:{},stage:'intro',round:1,picks:{},reason:{},inject:{},snap:{},headline:'',startedAt:{},timedOut:{},emails:''});
+let S=fresh();
+try{const t=JSON.parse(localStorage.getItem(KEY)||'null');if(t&&t.stage)S=Object.assign(fresh(),t)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+let confirmReset=false;
+const ready=()=>(S.team||'').trim().length>0&&[0,1,2].every(i=>(S.names[i]||'').trim().length>0);
+function checkStart(){const b=$('#startbtn');if(b){b.disabled=!ready();const h=$('#starthint');if(h)h.textContent=ready()?'':'Enter a team name and who plays each role to start.'}}
+const words=s=>(String(s||'').trim().match(/\S+/g)||[]).length;
+const nm=i=>(S.names[i]||'').trim();
+const who=i=>ROLE[i]+(nm(i)?' ('+esc(nm(i))+')':'');
+/* ---------- timer ---------- */
+const tLeft=n=>S.startedAt[n]?Math.max(0,S.startedAt[n]+ROUND_MS-Date.now()):ROUND_MS;
+function tText(n){const s=Math.ceil(tLeft(n)/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+/* ---------- engine ---------- */
+const injs=n=>R(n).injects||[];
+function injFor(n,pk){return injs(n).find(j=>(j.has||[]).every(h=>pk.includes(h))&&(j.lacks||[]).every(l=>!pk.includes(l)))||injs(n)[injs(n).length-1]}
+const INJ=n=>S.inject[n]!=null&&S.inject[n]>=0?injs(n)[S.inject[n]]:null;
+const menuAll=n=>{const j=INJ(n);return j?R(n).menu.concat(j.add):R(n).menu};
+const hi=n=>HIGH+(INJ(n)?2:0);
+const GR0=(n,i)=>R(n).menu[i][3];
+const CHG=(n,i)=>{const j=INJ(n);return j&&i<R(n).menu.length?j.change[i]||null:null};
+const GR=(n,i)=>{if(i>=R(n).menu.length)return menuAll(n)[i][3];const c=CHG(n,i);return c&&c.g!=null?c.g:GR0(n,i)};
+const CO=(n,i)=>menuAll(n)[i][4];
+const WHY=(n,i)=>{const c=CHG(n,i);return menuAll(n)[i][5]+(c?' After the update: '+c.tag:'')};
+function chgLabel(n,i){const c=CHG(n,i);if(!c)return null;if(c.g!=null&&c.g<GR0(n,i))return['Less useful now','dn'];if(c.must||(c.g!=null&&c.g>GR0(n,i)))return['More urgent now','up'];return GR0(n,i)<=0?['Still a weak choice','dn']:['Note','nt']}
+function cardsFor(n){const rd=R(n),p=S.picks[n]||[],out=[];(rd.conseq||[]).forEach(c=>{const ch=p.includes(c.item);if(!ch&&c.not_text)out.push({title:c.title,text:c.not_text,bad:true});if(ch&&c.yes_text)out.push({title:c.title,text:c.yes_text,bad:!!c.yes_bad})});
+  if(p.length>hi(n))out.push({title:'Stretched thin',text:'You committed to a lot of actions at once. Staff, volunteers and equipment were pulled in different directions, instructions overlapped, and some tasks were done late or badly.',bad:true});
+  else if(p.length<LOW)out.push({title:'Not enough done',text:p.length?'You committed to very little. Several needs had nobody responsible, and agencies waited for each other to decide.':'No decisions were made. Nobody led, and each agency worked on its own.',bad:true});return out}
+function epi(){return DATA.EPILOGUE.map(e=>{const good=(S.picks[e.round]||[]).includes(e.item);return{title:e.title,text:good?e.yes_text:e.not_text,good}})}
+const epiPts=()=>epi().filter(c=>c.good).length;
+/* ---------- screens ---------- */
+function bar(extra,noReset){const so=noReset?'':(confirmReset?`<span class="hint">Lose everything and start over?</span><button class="btn" style="padding:5px 12px;font-size:14px" data-a="reset2">Yes</button><button class="btn alt" style="padding:5px 12px;font-size:14px" data-a="cancel">No</button>`:`<button class="btn alt" style="padding:5px 12px;font-size:14px" data-a="reset">Start over</button>`);return `<div class="bar"><div class="wrap"><div class="brand">OPERATION <span>RISING WATER</span></div>${S.team&&!noReset?`<span class="pill">${esc(S.team)}</span>`:''}<div class="sp"></div>${extra||''}${so}</div></div>`}
+function vIntro(){return bar('')+`<div class="wrap"><div class="card"><div class="eyebrow">Team simulation</div><h1>${esc(DATA.CITY)} is flooding</h1><p class="hint" style="margin-top:8px">A fictional case for teaching.</p>${DATA.INTRO.map(x=>`<h3 style="margin-top:16px">${esc(x[0])}</h3><p style="margin:4px 0 0">${esc(x[1])}</p>`).join('')}
+<h3 style="margin-top:16px">Your roles</h3><p class="hint" style="margin-top:0">Three people, three agencies. Each agency has its own priorities and values, and they will not always agree. That is the point. Decide now who plays which and type the names. In a group of four or five, two people can share a role.</p>
+${DATA.ROLES.map((r,i)=>`<div class="role"><div class="eyebrow">${esc(r.name)}</div><div>${esc(r.summary)}</div><input type="text" data-f="name" data-i="${i}" maxlength="30" placeholder="Who plays this role? (required)" value="${esc(S.names[i]||'')}" style="margin-top:6px"></div>`).join('')}
+<div class="cq mid"><div class="k">Private role cards</div>Your agency's priorities, values and pressures are <b>secret</b>. Each person scans their own agency's QR code on their own phone and reads only that card. Your facilitator shows the codes. Do not read your card aloud or show it. Your team will find out what the others want only by talking.<p class="hint" style="margin:8px 0 0">No phone? <a href="#" data-a="ropen">Read a card on this device</a>, then press Back.</p></div>
+<label class="f" for="tn">Your team name</label><input type="text" id="tn" data-f="team" maxlength="30" placeholder="For example: Team 3" value="${esc(S.team)}">
+<ol class="steps" style="margin-top:16px"><li><span>There are <b>six rounds of five minutes</b>. The clock does not stop.</span></li><li><span>In each round, <b>select every decision your team makes</b>. Choose as few or as many as you think are right. Too little leaves gaps. Too much stretches everyone.</span></li><li><span>An update arrives in the middle of each round. It depends on what you have chosen so far. It makes some choices more urgent or less useful, and adds new options. You can then change your selection. If you submit early, you will miss it.</span></li><li><span>When time runs out your answers are sent in as they are. Missing decisions count as no decision.</span></li><li><span>At the end you get a score and a report on your answers.</span></li></ol>
+<p class="hint">One person types for the team. Your answers stay on this device.</p>
+<p style="margin-top:12px"><button class="btn" id="startbtn" data-a="start" ${ready()?'':'disabled'}>Go to Round 1</button> <span class="hint" id="starthint">${ready()?'':'Enter a team name and who plays each role to start.'}</span></p>
+<p class="hint" style="margin-top:14px"><a href="#qr" data-a="qr">Facilitator: make a QR code for this page</a></p><div id="qrbox">${location.hash==='#qr'?qrPanel():''}</div></div></div>`}
+const RH={emergency:0,police:0,council:1,redcross:2};
+function rvFromHash(){const k=location.hash.slice(1);return k in RH?{open:true,fixed:true,role:RH[k],round:1}:{open:false,fixed:false,role:null,round:1}}
+let RV=rvFromHash();
+function vRole(){const r=RV.role!=null?DATA.ROLES[RV.role]:null;let h=bar('',true)+`<div class="wrap"><div class="eyebrow">Private</div><h2>${RV.fixed&&r?esc(r.name)+': ':''}Your role card</h2><div class="cq bad"><div class="k">Only you</div>${RV.fixed?'This card is for the person playing this agency. Do not show your screen or read it aloud.':'Do not show this screen or read it aloud. Choose your own agency only.'}</div>`;
+  if(!RV.fixed)h+=`<div class="card"><div class="eyebrow">I am playing</div><div class="row" style="margin-top:8px">${DATA.ROLES.map((x,i)=>`<button class="btn ${RV.role===i?'':'alt'}" data-a="rv" data-r="${i}">${esc(x.name)}</button>`).join('')}</div></div>`;
+  if(r){const rd=R(RV.round);h+=`<div class="card"><div class="eyebrow">${esc(r.name)}</div><p style="margin:4px 0 0">${esc(r.summary)}</p><dl class="prof"><dt>Priorities</dt><dd>${esc(r.priorities)}</dd><dt>What you care about</dt><dd>${esc(r.cares)}</dd><dt>Your values and duties</dt><dd>${esc(r.ethics)}</dd><dt>Where you may clash</dt><dd>${esc(r.tension)}</dd></dl></div>
+  <div class="card"><div class="eyebrow">This round</div><div class="row" style="margin:8px 0">${DATA.ROUNDS.map(x=>`<button class="btn ${RV.round===x.n?'':'alt'}" style="padding:8px 14px" data-a="rr" data-r="${x.n}">${x.n}</button>`).join('')}</div><h3>Round ${rd.n}: ${esc(rd.name)}</h3><div class="cq mid"><div class="k">What is happening for you</div>${esc(rd.brief[r.name])}</div><div class="cq good"><div class="k">Your aim for this round</div>${esc(rd.want[r.name])}</div><div class="cq bad"><div class="k">Your objection</div>${esc(rd.resist[r.name])}</div></div>`}
+  if(!RV.fixed)h+=`<p style="margin-top:16px"><button class="btn" data-a="rback">Back to the team page</button></p>`;
+  return h+`</div>`}
+function qrPanel(){const u=/^https?:/.test(location.protocol)?location.href.split('#')[0]:'';return `<div class="card" style="margin-top:8px"><label class="f" for="qu" style="margin-top:0">Web address of this page</label><input type="text" id="qu" placeholder="https://..." value="${esc(u)}"><p class="row" style="margin-top:10px"><button class="btn alt" data-a="qrmake">Make QR code</button></p><div id="qrout"></div><p class="hint">Paste the address where the page is hosted, then press Make QR code. You get four codes. Put the three role codes on the slide. Each student scans the code for their own agency and sees only that card. The team page code is for the one device that runs the simulation.</p></div>`}
+function vBrief(n){const rd=R(n);let h=bar(`<span class="pill">Round ${n} of ${NR}</span>`)+`<div class="wrap"><div class="eyebrow">${esc(rd.phase)} · ${esc(rd.when)}</div><h2>Round ${n}: ${esc(rd.name)}</h2>`;
+  if(n>1){const cs=cardsFor(n-1);h+=`<div class="card"><div class="eyebrow">What happened because of your Round ${n-1} choices</div>${cs.length?cs.map(c=>`<div class="cq ${c.bad?'bad':'good'}"><div class="k">${esc(c.title)}</div>${esc(c.text)}</div>`).join(''):'<p>No knock-on effects.</p>'}</div>`}
+  h+=`<div class="card"><div class="eyebrow">Roles</div><p style="margin:4px 0 0">${ROLE.map((r,i)=>esc(r)+(nm(i)?' ('+esc(nm(i))+')':'')).join(' · ')}</p><p class="hint" style="margin:8px 0 0">Read this round's card for your agency on your phone now. Do not share it. <a href="#" data-a="ropen">No phone? Read it here.</a></p></div>
+  <div class="card"><p style="margin:0"><b>You have five minutes.</b> The clock starts when you press the button. An update will arrive halfway. It depends on your choices so far, and you will be able to change your selection. When time runs out, your answers are sent in as they are.</p><p style="margin:14px 0 0"><button class="btn" data-a="go">Start the five minutes</button></p></div></div>`;return h}
+function optHTML(n,i,pk,isNew){const m=menuAll(n)[i],L=chgLabel(n,i),c=CHG(n,i);return `<label class="opt ${pk.includes(i)?'on':''}${isNew?' isnew':''}"><input type="checkbox" data-pick="${i}" ${pk.includes(i)?'checked':''}><span>${isNew?'<span class="chg nw">New option</span> ':''}${esc(m[0])}${L?`<span class="chg ${L[1]}"><b>${L[0]}:</b> ${esc(c.tag)}</span>`:''}</span><span class="cost">${esc(m[2])}</span></label>`}
+function chaosHTML(n){const j=INJ(n);if(!j)return '';const rd=R(n),ch=Object.keys(j.change).map(Number);
+ return `<div class="chaos" id="injbox"><div class="eyebrow">New information · ${esc(j.time)}</div><h3>${esc(j.title)}</h3><p>${esc(j.text)}</p>
+ <div class="cq mid"><div class="k">Why your team got this</div>${esc(j.cause)}</div>
+ <div class="k2">What this changes for your decisions</div><ul class="chl">${ch.map(i=>{const L=chgLabel(n,i);return `<li><b>${esc(rd.menu[i][0])}</b><br><span class="chg ${L[1]}"><b>${L[0]}:</b> ${esc(j.change[i].tag)}</span></li>`}).join('')}<li><b>${j.add.length} new option${j.add.length>1?'s':''}</b> ${j.add.length>1?'have':'has'} been added below the main list.</li></ul>
+ <p style="margin:10px 0 0"><b>What to do now:</b> read your list again. Take out anything that no longer makes sense. Add the new options if they help. <b>What you have selected when you submit is what is marked.</b> The clock is still running.</p></div>`}
+function newOptsHTML(n){const j=INJ(n);if(!j)return '';const pk=S.picks[n]||[],M0=R(n).menu.length;return `<div class="newopts"><div class="eyebrow">New options because of this update</div><div class="menu" style="margin-top:8px">${j.add.map((m,k)=>optHTML(n,M0+k,pk,true)).join('')}</div></div>`}
+function menuHTML(n){const pk=S.picks[n]||[];return R(n).menu.map((m,i)=>optHTML(n,i,pk,false)).join('')}
+function vPlay(n){const rd=R(n),pk=S.picks[n]||[],sp=pk.length;
+  return bar(`<span class="pill">Round ${n} of ${NR}</span><span class="timer" id="timer">${tText(n)}</span>`)+`<div class="tbar"><i id="tfill" style="width:${100*tLeft(n)/ROUND_MS}%"></i></div><div class="wrap"><div class="eyebrow">${esc(rd.phase)} · ${esc(rd.when)}</div><h2>${esc(rd.name)}</h2><div id="chaosbox">${chaosHTML(n)}</div>
+  <div class="card"><div class="eyebrow">Situation</div><ul class="tl">${rd.situation.map(s=>`<li class="t">${esc(s[0])}</li><li>${esc(s[1])}</li>`).join('')}</ul>
+  <p class="hint" style="margin:12px 0 0">${ROLE.map((r,i)=>esc(r)+(nm(i)?' ('+esc(nm(i))+')':'')).join(' · ')}. Your private role card is on your phone. <a href="#" data-a="ropen">No phone? Open it here</a> (the clock keeps running).</p></div>
+  <div class="card"><div class="eyebrow">Your decisions</div><p style="margin:4px 0 0">Select all the decisions your team makes this round. <b id="sp">${sp}</b> <span class="hint">selected</span></p><div class="menu" id="menubox" style="margin-top:10px">${menuHTML(n)}</div><div id="newbox">${newOptsHTML(n)}</div>
+  <label class="f" for="fr">Add a note about your selection</label><textarea id="fr" data-f="reason" placeholder="Say what you chose, what you left out and why. Mention any ideas from the session that helped you decide.">${esc(S.reason[n]||'')}</textarea>
+  <p style="margin-top:16px"><button class="btn" id="sub" data-a="submit" ${sp<1?'disabled':''}>Submit Round ${n}</button> <span class="hint">You can submit early. Whatever you have when time runs out is sent as it is.</span></p><div id="submsg"></div></div></div>`}
+function vEpi(){const e=epi();return bar('')+`<div class="wrap"><div class="eyebrow">Epilogue</div><h2>What your choices led to</h2><div class="card">${e.map(c=>`<div class="cq ${c.good?'good':'bad'}"><div class="k">${esc(c.title)}</div>${esc(c.text)}</div>`).join('')}</div>
+<div class="card"><label class="f" for="fh" style="margin-top:0">Your headline</label><p class="hint" style="margin:0 0 6px">${esc(DATA.FINAL.task)}</p><textarea id="fh" data-f="headline">${esc(S.headline)}</textarea><p style="margin-top:14px"><button class="btn" data-a="finish">See my score and report</button></p></div></div>`}
+/* ---------- marking (shown only after the exercise) ---------- */
+function markRound(n){const rd=R(n),pk=S.picks[n]||[],j=INJ(n),M0=rd.menu.length,all=menuAll(n);
+  const orig=pk.filter(i=>i<M0);
+  const tot=rd.menu.reduce((a,m,i)=>a+(GR(n,i)>=2?GR(n,i):0),0),got=orig.reduce((a,i)=>a+(GR(n,i)>=2?GR(n,i):0),0);
+  const f=pk.length>hi(n)?Math.max(0.4,1-0.1*(pk.length-hi(n))):1;const cover=Math.round(Math.min(1,got/(tot||1))*4*f*2)/2;
+  const coordIdx=all.map((m,i)=>m[4]?i:-1).filter(i=>i>=0);const coordHit=pk.filter(i=>CO(n,i));
+  const coord=Math.round(Math.min(2,coordHit.length)*f*2)/2;
+  const weak=pk.filter(i=>GR(n,i)===0).length,load=pk.length>hi(n)?'high':pk.length<LOW?'low':'ok';
+  const judge=Math.max(0,1-0.5*weak-(load==='ok'?0:0.5));
+  const lead={};pk.forEach(i=>{const l=all[i][2];lead[l]=(lead[l]||0)+1});
+  let adapt=0,ad=null;
+  if(j){const snap=S.snap[n]||[];
+    const pool=[];Object.keys(j.change).map(Number).forEach(i=>{if(j.change[i].must&&!snap.includes(i)&&GR(n,i)>=2)pool.push(i)});j.add.forEach((m,k)=>{if(m[3]>=2)pool.push(M0+k)});
+    const ptot=pool.reduce((a,i)=>a+GR(n,i),0),pgot=pool.filter(i=>pk.includes(i)).reduce((a,i)=>a+GR(n,i),0),addFrac=ptot?pgot/ptot:1;
+    const stale=snap.filter(i=>i<M0&&GR(n,i)<GR0(n,i)&&GR(n,i)<=1),dropped=stale.filter(i=>!pk.includes(i));
+    adapt=Math.round((stale.length?2*(0.7*addFrac+0.3*dropped.length/stale.length):2*addFrac)*2)/2;
+    ad={took:pool.filter(i=>pk.includes(i)),missed:pool.filter(i=>!pk.includes(i)),stale,dropped,kept:stale.filter(i=>pk.includes(i))}}
+  return{n,cover,coord,judge,adapt,weak,load,count:pk.length,coordHit,coordIdx,lead,total:cover+coord+judge+adapt,rs:S.reason[n]||'',inj:j?{title:j.title,text:j.text,cause:j.cause,model:j.model,time:j.time,ad}:null}}
+function markAll(){const rounds=[];for(let n=1;n<=NR;n++)rounds.push(markRound(n));const ep=epiPts();const got=rounds.reduce((a,r)=>a+r.total,0)+ep;const max=NR*9+DATA.EPILOGUE.length;const pct=Math.round(100*got/max);
+  const band=pct>=80?['Excellent','Priorities were clear and your agencies worked together under pressure.']:pct>=65?['Strong','A sound response overall. A few priorities or links between agencies were missed.']:pct>=50?['Sound, with gaps','Some good decisions, but important priorities or co-ordination were missing. See the missed priorities below.']:pct>=35?['Developing','The report shows which priorities came first and what the consequences were.']:['Needs rethinking','Several decisions did not match the situation. Read the report and compare it with the ideas from the session.'];
+  return{rounds,ep,got,max,pct,band}}
+const VERD={3:['Strong choice','good'],2:['Sound choice','good'],1:['Reasonable, lower priority','mid'],0:['Premature or weak here','bad']};
+const f1=x=>(Math.round(x*2)/2).toString();
+function missedAfter(n,i){const c=(R(n).conseq||[]).find(x=>x.item===i);if(c&&c.not_text)return c.not_text;const e=DATA.EPILOGUE.find(x=>x.round===n&&x.item===i);return e?e.not_text:''}
+function vSummary(){const M=markAll();const LEADS=[...ROLE,'Joint'];
+  let h=bar('<span class="pill">Finished</span>')+`<div class="wrap"><div class="eyebrow">Your team</div><h2>${esc(S.team||'Team')}: score and report</h2>
+  <div class="card"><div class="row"><div><div class="eyebrow">Score</div><span class="big">${f1(M.got)}</span> <span class="hint">out of ${M.max}</span></div><div style="flex:1;min-width:220px"><h3>${M.band[0]} (${M.pct}%)</h3><p style="margin:0">${M.band[1]}</p></div></div>
+  <div style="overflow-x:auto;margin-top:12px"><table><tr><th>Round</th><th>Priorities (4)</th><th>Co-ordination (2)</th><th>Judgement (1)</th><th>Adapting (2)</th><th>Round</th></tr>${M.rounds.map(r=>`<tr><td>${r.n}. ${esc(R(r.n).name)}</td><td>${f1(r.cover)}</td><td>${r.coord}</td><td>${f1(r.judge)}</td><td>${f1(r.adapt)}</td><td><b>${f1(r.total)}</b></td></tr>`).join('')}<tr><td>Epilogue</td><td colspan="4">What your choices led to (up to ${DATA.EPILOGUE.length})</td><td><b>${M.ep}</b></td></tr></table></div>
+  <p class="hint">Your headline is not scored here. Your facilitator will run the headline vote.</p></div>
+  <div class="card"><h3>How this was marked</h3><ul><li><b>Priorities.</b> Each action was rated for how well it fits the situation at that moment: strong, sound, reasonable but lower priority, or premature. You score for the strong and sound actions you took, compared with all the strong and sound actions available in that round.</li><li><b>Co-ordination.</b> Actions that bring agencies, volunteers or households together under one plan, one voice or one contact.</li><li><b>Judgement and workload.</b> You lose marks for taking premature or weak actions, for doing too little, so that needs are left with nobody responsible, and for doing too much. If your agencies are stretched across too many actions, some are done badly, so your priorities and co-ordination marks are also reduced.</li><li><b>Adapting.</b> In the middle of each round an update changed the situation. You score for taking the new or urgent options it created, and for dropping choices it made less useful. If you submitted before the update arrived, you could not adapt and score 0 here.</li><li><b>Your written answers.</b> They are not scored by the page. Read them beside the model answers below and ask whether you would change anything. Your facilitator may read them too.</li><li><b>Epilogue.</b> What your choices led to when the second storm arrived.</li></ul></div>
+  <div class="card"><h3>Who led your actions</h3><div style="overflow-x:auto"><table><tr><th>Round</th>${LEADS.map(l=>`<th>${esc(l)}</th>`).join('')}</tr>${M.rounds.map(r=>`<tr><td>${r.n}</td>${LEADS.map(l=>`<td>${r.lead[l]||0}</td>`).join('')}</tr>`).join('')}</table></div><p class="hint">Look at how the lead changes from the first hours to recovery. Did each agency have a job in every round?</p></div>`;
+  M.rounds.forEach(r=>{const rd=R(r.n),pk=S.picks[r.n]||[],all=menuAll(r.n);
+    h+=`<div class="card"><div class="eyebrow">Round ${r.n} · ${esc(rd.name)}</div><h3>Your choices</h3>`;
+    if(S.timedOut[r.n])h+=`<div class="cq mid"><div class="k">Time ran out</div>This round was sent in when the time ended.</div>`;
+    h+=`<div class="cq ${r.load==='ok'?'good':'bad'}"><div class="k">Workload</div>${r.count===0?'You made no decisions in this round.':r.load==='low'?'You chose '+r.count+' action'+(r.count>1?'s':'')+'. That left gaps: needs with nobody responsible, and agencies waiting for each other.':r.load==='high'?'You chose '+r.count+' actions. That is a lot to run at once. Teams, messages and volunteers get stretched and confused, and some actions are done badly. Your marks for priorities and co-ordination are reduced for this reason.':'You chose '+r.count+' actions, a workload your agencies could manage.'}</div>`;
+    pk.forEach(i=>{const v=VERD[GR(r.n,i)];h+=`<div class="cq ${v[1]}"><div class="k">${v[0]} · led by ${esc(all[i][2])}</div><b>${esc(all[i][0])}</b><br>${esc(WHY(r.n,i))}</div>`});
+    const missed=all.map((m,i)=>i).filter(i=>GR(r.n,i)>=2&&!pk.includes(i));
+    if(missed.length){h+=`<h3 style="margin-top:14px">Priorities you did not choose</h3>`;missed.forEach(i=>{const after=missedAfter(r.n,i);h+=`<div class="cq bad"><div class="k">${GR(r.n,i)===3?'Strong choice missed':'Sound choice missed'}</div><b>${esc(all[i][0])}</b><br>${esc(WHY(r.n,i))}${after?`<br><i>What happened: ${esc(after)}</i>`:''}</div>`})}
+    h+=`<h3 style="margin-top:14px">Co-ordination and your reasoning</h3><p>Co-ordinating actions chosen: <b>${r.coordHit.length}</b>. ${r.coordHit.length?'Good: '+r.coordHit.map(i=>esc(all[i][0])).join('; ')+'.':'None chosen. Actions such as '+r.coordIdx.slice(0,2).map(i=>esc(all[i][0])).join(' or ')+' bring agencies together.'}</p>
+    <p><b>Your note:</b> ${esc(r.rs)||'<i>none written</i>'}</p><p class="hint">Not scored. Ask yourself whether your note links each choice to an idea from the session.</p>`;
+    if(r.inj){const q=r.inj,ad=q.ad,nm_=k=>esc(all[k][0]);h+=`<div class="chaos"><div class="eyebrow">Update during this round: ${esc(q.title)} (${esc(q.time)}) · adapting ${f1(r.adapt)} of 2</div><p>${esc(q.text)}</p><p><b>Why your team got this:</b> ${esc(q.cause)}</p>
+      <p><b>New or urgent options you took:</b> ${ad.took.length?ad.took.map(nm_).join('; '):'<i>none</i>'}.</p>
+      <p><b>New or urgent options you did not take:</b> ${ad.missed.length?ad.missed.map(nm_).join('; '):'<i>none, you took them all</i>'}.</p>
+      ${ad.stale.length?`<p><b>Choices the update made less useful:</b> you had selected ${ad.stale.map(nm_).join('; ')}. ${ad.dropped.length?'You removed: '+ad.dropped.map(nm_).join('; ')+'.':''} ${ad.kept.length?'You kept: '+ad.kept.map(nm_).join('; ')+'.':''}</p>`:''}
+      <p><b>A strong response:</b> ${esc(q.model)}</p></div>`}else h+=`<div class="cq mid"><div class="k">Update missed</div>You submitted before the update arrived, so you could not adapt your choices. Adapting marks: 0.</div>`;
+    h+=`</div>`});
+  h+=`<div class="card"><h3>Epilogue: the second storm</h3>${epi().map(c=>`<div class="cq ${c.good?'good':'bad'}"><div class="k">${esc(c.title)}</div>${esc(c.text)}</div>`).join('')}</div>
+  <div class="card"><div class="eyebrow">Your headline</div><p>${esc(S.headline)||'<span class="hint">None written.</span>'}</p></div>
+  <div class="card noprint"><h3>Discussion</h3><ol>${DATA.DEBRIEF.map(q=>`<li>${esc(q)}</li>`).join('')}</ol></div>
+  <div class="card noprint"><h3>Send your results</h3><p>Add the email addresses of your team members and your tutor, separated by commas. Your email app opens with the results ready to send.</p><label class="f" for="em">Email addresses</label><input type="text" id="em" data-f="emails" placeholder="name@example.com, name2@example.com" value="${esc(S.emails||'')}"><p class="row" style="margin-top:12px"><button class="btn" data-a="mail">Open email</button><button class="btn alt" data-a="copy">Copy results</button><button class="btn alt" data-a="dl">Download results</button></p><p class="hint" id="sendnote">If the email looks cut short, use Copy or Download and paste the results into your email.</p></div>
+  <p class="noprint row"><button class="btn alt" onclick="window.print()">Print or save as PDF</button>${confirmReset?`<span>Start again and lose these answers?</span><button class="btn" data-a="reset2">Yes, start again</button><button class="btn alt" data-a="cancel">No</button>`:`<button class="btn alt" data-a="reset">Start again</button>`}</p></div>`;return h}
+function resultsText(){const M=markAll();const L=[];
+  L.push('OPERATION RISING WATER: results');L.push('Team: '+(S.team||'Team'));L.push('Roles: '+ROLE.map((r,i)=>r+(nm(i)?' - '+nm(i):'')).join('; '));L.push('Score: '+f1(M.got)+' out of '+M.max+' ('+M.pct+'%), '+M.band[0]);L.push('');
+  M.rounds.forEach(r=>{const rd=R(r.n),all=menuAll(r.n);L.push('ROUND '+r.n+': '+rd.name+' (priorities '+f1(r.cover)+'/4, co-ordination '+r.coord+'/2, judgement '+f1(r.judge)+'/1, adapting '+f1(r.adapt)+'/2)');
+    (S.picks[r.n]||[]).forEach(i=>L.push('- '+all[i][0]+' ['+VERD[GR(r.n,i)][0]+', '+all[i][2]+']'));
+    L.push('Note: '+((S.reason[r.n]||'').trim()||'none written'));
+    L.push(r.inj?'Update ('+r.inj.title+'): took '+r.inj.ad.took.length+' new or urgent options, missed '+r.inj.ad.missed.length+'.':'Update missed: submitted before it arrived.');L.push('')});
+  L.push('Epilogue marks: '+M.ep+' out of '+DATA.EPILOGUE.length);L.push('Headline: '+((S.headline||'').trim()||'none written'));return L.join('\n')}
+/* ---------- QR ---------- */
+function makeQR(u){const q=qrcode(0,'M');q.addData(u);q.make();const n=q.getModuleCount(),cell=10,m=3,sz=(n+2*m)*cell;const cv=document.createElement('canvas');cv.width=cv.height=sz;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,sz,sz);x.fillStyle='#000';for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))x.fillRect((c+m)*cell,(r+m)*cell,cell,cell);return cv.toDataURL('image/png')}
+/* ---------- control ---------- */
+function render(){const a=$('#app');if(RV.open){a.innerHTML=vRole();window.scrollTo(0,0);return}a.innerHTML=S.stage==='intro'?vIntro():S.stage==='brief'?vBrief(S.round):S.stage==='play'?vPlay(S.round):S.stage==='epi'?vEpi():vSummary();window.scrollTo(0,0);if(S.stage==='play')tick()}
+function submitRound(auto){const n=S.round;if(auto)S.timedOut[n]=true;if(n<NR){S.round=n+1;S.stage='brief'}else S.stage='epi';save();render()}
+function reviewHTML(n){const j=INJ(n),pk=S.picks[n]||[],M0=R(n).menu.length,all=menuAll(n);if(!j)return '';
+  const stale=pk.filter(i=>i<M0&&GR(n,i)<GR0(n,i)&&GR(n,i)<=1);
+  const urgent=[];Object.keys(j.change).map(Number).forEach(i=>{if(j.change[i].must&&!pk.includes(i))urgent.push(i)});
+  const newNone=j.add.every((m,k)=>!pk.includes(M0+k));
+  if(!stale.length&&!urgent.length&&!newNone)return '';
+  return '<div class="cq mid" style="margin-top:12px"><div class="k">Check before you submit</div>'+(stale.length?'<p style="margin:6px 0 0">Still selected, but the update made these less useful: <b>'+stale.map(i=>esc(all[i][0])).join('; ')+'</b>.</p>':'')+(urgent.length?'<p style="margin:6px 0 0">The update made these more urgent, and they are not selected: <b>'+urgent.map(i=>esc(all[i][0])).join('; ')+'</b>.</p>':'')+(newNone?'<p style="margin:6px 0 0">You have not selected any of the new options.</p>':'')+'<p class="row" style="margin:10px 0 0"><button class="btn alt" data-a="cancelsub">Go back and change</button><button class="btn" data-a="submit2">Submit as it is</button></p></div>'}
+function tick(){if(S.stage!=='play')return;const n=S.round,left=tLeft(n);const el=$('#timer');if(el){el.textContent=tText(n);el.style.color=left<60000?'var(--bad)':''}const f=$('#tfill');if(f){f.style.width=(100*left/ROUND_MS)+'%';f.className=left<60000?'low':''}
+  if(S.inject[n]==null&&ROUND_MS-left>=CHAOS_AT){const pk=(S.picks[n]||[]).slice();S.snap[n]=pk;S.inject[n]=injs(n).indexOf(injFor(n,pk));save();const b=$('#chaosbox');if(b){b.innerHTML=chaosHTML(n);const mb=$('#menubox');if(mb)mb.innerHTML=menuHTML(n);const nb=$('#newbox');if(nb)nb.innerHTML=newOptsHTML(n);const sm=$('#submsg');if(sm)sm.innerHTML='';b.scrollIntoView({block:'start',behavior:'smooth'})}}
+  if(left<=0)submitRound(true)}
+function meters(){const n=S.round,sp=(S.picks[n]||[]).length;const e=$('#sp');if(e)e.textContent=sp;const b=$('#sub');if(b)b.disabled=sp<1;document.querySelectorAll('.opt').forEach(o=>{const i=o.querySelector('input[type=checkbox]');if(i){o.classList.toggle('on',i.checked);}})}
+document.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;if(!f)return;const n=S.round;if(f==='headline')S.headline=t.value;else if(f==='emails')S.emails=t.value;else if(f==='name'){S.names[t.dataset.i]=t.value;checkStart()}else if(f==='team'){S.team=t.value;checkStart()}else if(f==='reason')S.reason[n]=t.value;else if(f==='chaos')S.chaos[n]=t.value;save()});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.pick==null)return;const n=S.round,i=+t.dataset.pick;let p=S.picks[n]||[];p=t.checked?[...new Set([...p,i])].sort((a,b)=>a-b):p.filter(x=>x!==i);S.picks[n]=p;save();meters()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a==='start'){S.team=($('#tn').value||'').trim();if(!ready())return;S.stage='brief';S.round=1;save();render()}
+ else if(a==='go'){const n=S.round;S.startedAt[n]=Date.now();S.stage='play';save();render()}
+ else if(a==='submit'){const n=S.round,box=$('#submsg');const el=ROUND_MS-tLeft(n);if(S.inject[n]==null){const w=Math.max(0,Math.ceil((CHAOS_AT-el)/1000));box.innerHTML='<div class="cq mid" style="margin-top:12px"><div class="k">An update is on its way</div>New information arrives in about '+Math.floor(w/60)+':'+String(w%60).padStart(2,'0')+'. It will depend on what you have chosen, and it will change what you should do. If you submit now you will not see it, and you score 0 for adapting.<p class="row" style="margin:10px 0 0"><button class="btn alt" data-a="cancelsub">Wait for the update</button><button class="btn" data-a="submit2">Submit anyway</button></p></div>'}else{const w=reviewHTML(n);if(w)box.innerHTML=w;else submitRound(false)}}
+ else if(a==='submit2'){submitRound(false)}else if(a==='cancelsub'){const bx=$('#submsg');if(bx)bx.innerHTML=''}
+ else if(a==='finish'){S.stage='summary';save();render()}
+ else if(a==='rv'){RV.role=+b.dataset.r;render()}else if(a==='rr'){RV.round=+b.dataset.r;render()}else if(a==='rhide'){RV.role=null;render()}else if(a==='ropen'){e.preventDefault();RV={open:true,fixed:false,role:null,round:S.stage==='intro'?1:S.round};render()}else if(a==='rback'){e.preventDefault();RV={open:false,fixed:false,role:null,round:1};try{if(location.hash.slice(1) in RH)history.replaceState(null,'',location.pathname+location.search)}catch(x){}render()}
+ else if(a==='qr'){e.preventDefault();$('#qrbox').innerHTML=qrPanel()}
+ else if(a==='qrmake'){const u=($('#qu').value||'').trim();const o=$('#qrout');if(!/^https?:\/\/\S+$/.test(u)){o.innerHTML='<p class="hint">Type or paste the full web address, starting with https://</p>';return}try{const base=u.split('#')[0];const one=(x,lab,f)=>'<div style="margin:12px 0"><div class="eyebrow">'+lab+'</div><img src="'+x+'" alt="QR code" style="width:200px;max-width:100%;image-rendering:pixelated;border:1px solid var(--line);margin:6px 0"><br><a class="btn alt" style="text-decoration:none;display:inline-block" download="'+f+'" href="'+x+'">Save image</a></div>';o.innerHTML=one(makeQR(base),'Team page (one device)','Rising Water QR team.png')+one(makeQR(base+'#emergency'),'Emergency services role card','Rising Water QR emergency services.png')+one(makeQR(base+'#council'),'Council role card','Rising Water QR council.png')+one(makeQR(base+'#redcross'),'British Red Cross role card','Rising Water QR british red cross.png')}catch(x){o.innerHTML='<p class="hint">That address is too long for a QR code.</p>'}}
+ else if(a==='mail'){const to=($('#em').value||'').split(/[,;\s]+/).filter(x=>/@/.test(x));if(!to.length){$('#sendnote').textContent='Add at least one email address first.';return}location.href='mailto:'+to.join(',')+'?subject='+encodeURIComponent('Operation Rising Water results: '+(S.team||'Team'))+'&body='+encodeURIComponent(resultsText().slice(0,1500))}
+ else if(a==='copy'){const tx=resultsText();const ok=()=>{$('#sendnote').textContent='Copied. Paste it into an email.'};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tx).then(ok,()=>{$('#sendnote').textContent='Copy was blocked. Use Download instead.'});else $('#sendnote').textContent='Copy is not available here. Use Download instead.'}
+ else if(a==='dl'){const bl=new Blob([resultsText()],{type:'text/plain'});const u=URL.createObjectURL(bl);const l=document.createElement('a');l.href=u;l.download='Rising Water results - '+(S.team||'Team').replace(/[^\w -]/g,'')+'.txt';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+ else if(a==='reset'){confirmReset=true;render()}else if(a==='cancel'){confirmReset=false;render()}
+ else if(a==='reset2'){confirmReset=false;S=fresh();save();render()}});
+window.addEventListener('hashchange',()=>{RV=rvFromHash();render()});
+setInterval(tick,500);
+render();
+
+
+</script></body></html>
